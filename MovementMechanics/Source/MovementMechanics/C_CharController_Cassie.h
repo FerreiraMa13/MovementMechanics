@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "C_CharController_Cassie.generated.h"
 #include "Camera/CameraComponent.h"
+#include "C_CharController_Cassie.generated.h"
+
 
 UCLASS()
 class MOVEMENTMECHANICS_API AC_CharController_Cassie : public ACharacter
@@ -18,6 +19,8 @@ public:
 	float character_speed = 1.0f;
 	float strafe_multiplier = 0.8f;
 	float back_multiplier = 0.6f;
+	float rotation_multiplier_x = 2.0f;
+	float rotation_multiplier_y = 1.5f;
 
 protected:
 	// Called when the game starts or when spawned
