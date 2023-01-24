@@ -4,32 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Dash.generated.h"
+#include "Ability.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MOVEMENTMECHANICS_API UDash : public UActorComponent
+class MOVEMENTMECHANICS_API UAbility : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's
-	UDash();
+	UAbility();
+	bool has_cooldown = true;
+	int cooldown = 0;
 
 protected:
-	// Called when the game starts
+	int timer = 0;
 	virtual void BeginPlay() override;
-	
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	bool PerformDash();
 
-private:
-	UPROPERTY()
-	UStaticMeshComponent* MeshComp;
-
-	UPROPERTY(EditAnywhere, Category = "Forces")
-		float force = 1000.0f;
-	
+		
 };

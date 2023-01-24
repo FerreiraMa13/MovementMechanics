@@ -1,8 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-#include "Dash.h"
+
+
+#include "Ability.h"
 
 // Sets default values for this component's properties
-UDash::UDash()
+UAbility::UAbility()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -13,16 +15,20 @@ UDash::UDash()
 
 
 // Called when the game starts
-void UDash::BeginPlay()
+void UAbility::BeginPlay()
 {
 	Super::BeginPlay();
-	MeshComp = Cast<UStaticMeshComponet>(GetOwner()->GetRootComponent());
+
+	// ...
+	
 }
 
 
 // Called every frame
-void UDash::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UAbility::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// ...
 }
 

@@ -3,33 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
-#include "Dash.generated.h"
+#include "Components/SceneComponent.h"
+#include "DashScene.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MOVEMENTMECHANICS_API UDash : public UActorComponent
+class MOVEMENTMECHANICS_API UDashScene : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's
-	UDash();
+	// Sets default values for this component's properties
+	UDashScene();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	bool PerformDash();
 
-private:
-	UPROPERTY()
-	UStaticMeshComponent* MeshComp;
-
-	UPROPERTY(EditAnywhere, Category = "Forces")
-		float force = 1000.0f;
-	
+		
 };
