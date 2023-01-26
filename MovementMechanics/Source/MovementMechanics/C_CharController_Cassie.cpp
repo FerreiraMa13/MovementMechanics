@@ -122,11 +122,6 @@ void AC_CharController_Cassie::MoveForward(float axis_value)
 		}
 	}
 }
-void AC_CharController_Cassie::JumpCheck()
-{
-
-		Jump();
-}
 void AC_CharController_Cassie::ActivateDash()
 {
 	if (input_active && timer <= 0)
@@ -140,7 +135,6 @@ void AC_CharController_Cassie::ActivateDash()
 		currentState = DASHING;
 	}
 }
-
 void AC_CharController_Cassie::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));
@@ -150,7 +144,8 @@ void AC_CharController_Cassie::OnBeginOverlap(UPrimitiveComponent* OverlappedCom
 		input_active = true;
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}
-}void AC_CharController_Cassie::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+}
+void AC_CharController_Cassie::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));
 	if (DASHING)
@@ -159,4 +154,18 @@ void AC_CharController_Cassie::OnBeginOverlap(UPrimitiveComponent* OverlappedCom
 		input_active = true;
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}
+}
+void AC_CharController_Cassie::ForceJump()
+{
+	Jump();
+}
+void AC_CharController_Cassie::ForceJump(FVector direction)
+{
+	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+	auto location = GetActorLocation();
+	startPoint = location;
+	travelDirection = direction;
+	input_active = false;
+	timer = max_timer;
+	currentState = DASHING;
 }
