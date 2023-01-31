@@ -31,16 +31,23 @@ void ABouncePad::Tick(float DeltaTime)
 
 void ABouncePad::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Bounce!"));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Bounce!"));
 		if (player != nullptr)
 		{
-			if (launch_vector == FVector(0, 0, 0))
+			if (dash_launch)
 			{
-				player->ForceJump();
-			}
-			else
-			{
-				player->ForceJump(launch_vector);
+				if (launch_vector == FVector(0, 0, 0))
+				{
+					player->ForceJump();
+				}
+				else
+				{
+					FVector temp_rotation = player->GetRotation();
+					temp_rotation.Normalize();
+					launch_vector.X = temp_rotation.X;
+					launch_vector.Y = temp_rotation.Y;
+					player->ForceJump(launch_vector);
+				}
 			}
 		}
 }

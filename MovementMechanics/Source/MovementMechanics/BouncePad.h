@@ -18,11 +18,13 @@ public:
 	// Sets default values for this actor's properties
 	ABouncePad();
 	UPROPERTY(EditAnywhere, Category = "Launch");
-	FVector launch_vector = FVector(0, 0, 0);
+		FVector launch_vector = FVector(0, 0, 0);
+	UPROPERTY(EditAnywhere, Category = "Launch");
+		bool dash_launch = true;
 	UPROPERTY(EditAnywhere, Category = "Components")
 		UBoxComponent* BoxComponent;
 	UPROPERTY(EditAnywhere, Category = "References")
-	AC_CharController_Cassie* player = nullptr;
+		AC_CharController_Cassie* player = nullptr;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

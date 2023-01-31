@@ -26,11 +26,14 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void PerformDash(FVector startingPoint, FVector direction);
+	void PerformDash(FVector startingPoint, FVector direction, float magnitude);
+	void PerformDash(FVector startingPoint, FVector direction, float magnitude = dash_distance, float velocity = dash_velocity);
 	bool CheckComplete( FVector current_pos);
 
 	FVector endPoint;
 	FVector travelDirection;
 	bool dashing;
+	float curr_dash_velocity = 50.f;
 
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		ACharacter* owner;
@@ -38,10 +41,10 @@ public:
 private:	
 	
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
-		float dash_distance = 100.0f;
+		static float dash_distance = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
-		float dash_velocity = 50.0f;
+		static float dash_velocity = 50.0f;
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
-		float proximity_treshold = 5.0f;
+		static float proximity_treshold = 5.0f;
 	
 };

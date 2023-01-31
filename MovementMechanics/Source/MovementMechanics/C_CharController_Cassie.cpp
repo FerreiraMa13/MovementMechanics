@@ -124,7 +124,7 @@ void AC_CharController_Cassie::MoveForward(float axis_value)
 }
 void AC_CharController_Cassie::ActivateDash()
 {
-	if (input_active && timer <= 0)
+	if ( timer <= 0)
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 		auto location = GetActorLocation();
@@ -155,6 +155,7 @@ void AC_CharController_Cassie::OnHit(UPrimitiveComponent* HitComp, AActor* Other
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}
 }
+
 void AC_CharController_Cassie::ForceJump()
 {
 	Jump();
@@ -164,8 +165,11 @@ void AC_CharController_Cassie::ForceJump(FVector direction)
 	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 	auto location = GetActorLocation();
 	startPoint = location;
-	travelDirection = direction;
 	input_active = false;
-	timer = max_timer;
+	travelDirection = direction;
 	currentState = DASHING;
+}
+FVector AC_CharController_Cassie::GetRotation()
+{
+	return Camera->GetForwardVector();
 }

@@ -49,9 +49,21 @@ void UDash::PerformDash(FVector startingPoint, FVector direction)
 {
 	endPoint = startingPoint + direction * dash_distance;
 	travelDirection = direction;
+	curr_dash_velocity = dash_velocity;
 	dashing = true;
 }
-
+void UDash::PerformDash(FVector startingPoint, FVector direction, float magnitude)
+{
+	endPoint = startingPoint + direction * magnitude;
+	travelDirection = direction;
+	dashing = true;
+}
+void PerformDash(FVector startingPoint, FVector direction, float magnitude = dash_distance, float velocity = dash_velocity)
+{
+	endPoint = startingPoint + direction * magnitude;
+	travelDirection = direction;
+	dashing = true;
+}
 bool UDash::CheckComplete(FVector current_pos)
 {
 	float distance = endPoint.Distance(current_pos, endPoint);
