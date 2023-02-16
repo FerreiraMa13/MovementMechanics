@@ -26,18 +26,14 @@ void UDash::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 
 	if (dashing)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Error Message: Dash"));
 		FVector current_location = owner->GetActorLocation();
 		float distance = endPoint.Distance(current_location, endPoint);
 		if (distance > proximity_treshold)
 		{
-			
 			if (owner != nullptr)
 			{
-				
 				owner->SetActorLocation(current_location + travelDirection * dash_velocity * DeltaTime);
 			}
-			
 		}
 		else
 		{
@@ -58,7 +54,7 @@ void UDash::PerformDash(FVector startingPoint, FVector direction, float magnitud
 	travelDirection = direction;
 	dashing = true;
 }
-void PerformDash(FVector startingPoint, FVector direction, float magnitude = dash_distance, float velocity = dash_velocity)
+void UDash::PerformDash(FVector startingPoint, FVector direction, float magnitude, float velocity)
 {
 	endPoint = startingPoint + direction * magnitude;
 	travelDirection = direction;

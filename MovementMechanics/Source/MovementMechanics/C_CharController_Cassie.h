@@ -18,6 +18,14 @@ enum PlayerAbilityStates
 	default = -1
 };
 
+UENUM()
+enum CustomMovement
+{
+	NONE = 0,
+	DASH = 1,
+	SLIDE = 2,
+};
+
 UCLASS()
 class MOVEMENTMECHANICS_API AC_CharController_Cassie : public ACharacter
 {
@@ -36,6 +44,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		TEnumAsByte<PlayerAbilityStates> currentState = default;
+	UPROPERTY(EditAnywhere, Category = "Movement States")
+		TEnumAsByte<CustomMovement> currentMovement = NONE;
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		FVector startPoint;
 	FVector travelDirection;
@@ -49,6 +59,7 @@ protected:
 	void MoveForward(float axis_value);
 	void JumpCheck();
 	void ActivateDash();
+	void HandleDash(float delta);
 
 	UPROPERTY(EditAnywhere, Category = "Components")
 		UCameraComponent* Camera;

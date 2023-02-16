@@ -3,7 +3,6 @@
 
 #include "C_CharController_Cassie.h"
 
-// Sets default values
 AC_CharController_Cassie::AC_CharController_Cassie()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -26,8 +25,6 @@ AC_CharController_Cassie::AC_CharController_Cassie()
 	Capsule = FindComponentByClass<UCapsuleComponent>();
 	Capsule->OnComponentHit.AddDynamic(this, &AC_CharController_Cassie::OnHit);
 }
-
-// Called when the game starts or when spawned
 void AC_CharController_Cassie::BeginPlay()
 {
 	Super::BeginPlay();
@@ -43,26 +40,30 @@ void AC_CharController_Cassie::Tick(float DeltaTime)
 	}
 	if (!input_active)
 	{
-		FVector current_location = GetActorLocation();
 		switch (currentState)
 		{
 		case DEFAULT:
 			break;
 		case DASHING:
-			SetActorLocation(current_location + travelDirection * dash_velocity * DeltaTime);
-			if (abs(current_location.Distance(GetActorLocation(), startPoint)) > dash_distance || abs(current_location.Distance(current_location, GetActorLocation()) < 10.0f))
-			{
-				currentState = default;
-				input_active = true;
-				GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-			}
+			HandleDash(DeltaTime);
 			break;
 		default:
 			break;
 		}
 	}
 }
-
+void AC_CharController_Cassie::HandleDash(float delta)
+{
+	FVector current_location = GetActorLocation();
+	SetActorLocation(current_location + travelDirection * dash_velocity * delta);
+	if (abs(current_location.Distance(GetActorLocation(), startPoint)) > dash_distance || abs(current_location.Distance(current_location, GetActorLocation()) < 10.0f))
+	{
+		currentState = default;
+		input_active = true;
+		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+		Jump();
+	}
+}
 // Called to bind functionality to input
 void AC_CharController_Cassie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -126,7 +127,8 @@ void AC_CharController_Cassie::ActivateDash()
 {
 	if ( timer <= 0)
 	{
-		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+		GetCharacterMovement()->SetMovementMode(MOVE_Custom);
+		currentMovement = DASH;
 		auto location = GetActorLocation();
 		startPoint = location;
 		travelDirection = Camera->GetForwardVector();
@@ -155,14 +157,14 @@ void AC_CharController_Cassie::OnHit(UPrimitiveComponent* HitComp, AActor* Other
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}
 }
-
 void AC_CharController_Cassie::ForceJump()
 {
 	Jump();
 }
 void AC_CharController_Cassie::ForceJump(FVector direction)
 {
-	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+	GetCharacterMovement()->SetMovementMode(MOVE_Custom);
+	currentMovement = DASH;
 	auto location = GetActorLocation();
 	startPoint = location;
 	input_active = false;
