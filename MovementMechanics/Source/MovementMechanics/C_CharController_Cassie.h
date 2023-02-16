@@ -15,7 +15,8 @@ enum PlayerAbilityStates
 {
 	DEFAULT = 0,
 	DASHING = 1,
-	default = -1
+	SLIDING = 2,
+	PAD = 3,
 };
 
 UENUM()
@@ -24,6 +25,7 @@ enum CustomMovement
 	NONE = 0,
 	DASH = 1,
 	SLIDE = 2,
+	JUMPAD = 3,
 };
 
 UCLASS()
@@ -41,9 +43,12 @@ public:
 	float rotation_multiplier_y = 1.5f;
 	bool input_active = true;
 	float timer = 0.0f;
+	float slide_timer = 0.0f;
+	float jumpad_velocity = 60.0f;
+	float jumpad_distance = 120.0f;
 	
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
-		TEnumAsByte<PlayerAbilityStates> currentState = default;
+		TEnumAsByte<PlayerAbilityStates> currentState = DEFAULT;
 	UPROPERTY(EditAnywhere, Category = "Movement States")
 		TEnumAsByte<CustomMovement> currentMovement = NONE;
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
@@ -59,7 +64,11 @@ protected:
 	void MoveForward(float axis_value);
 	void JumpCheck();
 	void ActivateDash();
+	void ActivateSlide();
 	void HandleDash(float delta);
+	void HandleSlide(float delta);
+	void HandleJumpad(float delta);
+	void HandleTimers(float delta);
 
 	UPROPERTY(EditAnywhere, Category = "Components")
 		UCameraComponent* Camera;
@@ -76,7 +85,9 @@ protected:
 		float proximity_treshold = 5.0f;
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		float max_timer = 2.0f;
-	
+	UPROPERTY(EditAnywhere, Category = "Slide Details")
+		float max_slide_timer = 3.0f;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -84,7 +95,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void ForceJump();
-	void ForceJump(FVector direction);
+	void ForceJump(FVector direction, float distance, float speed);
 	FVector GetRotation();
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

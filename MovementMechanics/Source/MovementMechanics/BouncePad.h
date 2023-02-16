@@ -25,6 +25,7 @@ public:
 		UBoxComponent* BoxComponent;
 	UPROPERTY(EditAnywhere, Category = "References")
 		AC_CharController_Cassie* player = nullptr;
+	FVector HandleInteractions();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

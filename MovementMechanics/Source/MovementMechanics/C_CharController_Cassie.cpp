@@ -34,12 +34,9 @@ void AC_CharController_Cassie::BeginPlay()
 void AC_CharController_Cassie::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (timer > 0)
-	{
-		timer -= DeltaTime;
-	}
-	if (!input_active)
-	{
+	HandleTimers(DeltaTime);
+	//if (!input_active)
+	//{
 		switch (currentState)
 		{
 		case DEFAULT:
@@ -47,9 +44,26 @@ void AC_CharController_Cassie::Tick(float DeltaTime)
 		case DASHING:
 			HandleDash(DeltaTime);
 			break;
+		case SLIDING:
+			HandleSlide(DeltaTime);
+			break;
+		case PAD:
+			HandleJumpad(DeltaTime);
+			break;
 		default:
 			break;
 		}
+	//}
+}
+void AC_CharController_Cassie::HandleTimers(float delta)
+{
+	if (timer > 0)
+	{
+		timer -= delta;
+	}
+	if (slide_timer > 0)
+	{
+		slide_timer -= delta;
 	}
 }
 void AC_CharController_Cassie::HandleDash(float delta)
@@ -58,13 +72,35 @@ void AC_CharController_Cassie::HandleDash(float delta)
 	SetActorLocation(current_location + travelDirection * dash_velocity * delta);
 	if (abs(current_location.Distance(GetActorLocation(), startPoint)) > dash_distance || abs(current_location.Distance(current_location, GetActorLocation()) < 10.0f))
 	{
-		currentState = default;
+		currentState = DEFAULT;
 		input_active = true;
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 		Jump();
 	}
 }
-// Called to bind functionality to input
+void AC_CharController_Cassie::HandleSlide(float delta)
+{
+	FVector current_location = GetActorLocation();
+	SetActorLocation(current_location + this->GetActorForwardVector() * dash_velocity * delta);
+	if (slide_timer <= 0)
+	{
+		currentState = DEFAULT;
+		input_active = true;
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
+}
+void AC_CharController_Cassie::HandleJumpad(float delta)
+{
+	FVector current_location = GetActorLocation();
+	SetActorLocation(current_location + travelDirection * jumpad_velocity * delta);
+	if (abs(current_location.Distance(GetActorLocation(), startPoint)) > jumpad_distance|| abs(current_location.Distance(current_location, GetActorLocation()) < 5.0f))
+	{
+		currentState = DEFAULT;
+		input_active = true;
+		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+		Jump();
+	}
+}
 void AC_CharController_Cassie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -75,6 +111,7 @@ void AC_CharController_Cassie::SetupPlayerInputComponent(UInputComponent* Player
 	PlayerInputComponent->BindAxis(TEXT("Movement Sideway"), this, &AC_CharController_Cassie::MoveSideway);
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("Ability1"), IE_Pressed, this, &AC_CharController_Cassie::ActivateDash);
+	PlayerInputComponent->BindAction(TEXT("Slide"), IE_Pressed, this, &AC_CharController_Cassie::ActivateSlide);
 }
 void AC_CharController_Cassie::LookHorizontal(float axis_value)
 {
@@ -137,12 +174,29 @@ void AC_CharController_Cassie::ActivateDash()
 		currentState = DASHING;
 	}
 }
+void AC_CharController_Cassie::ActivateSlide()
+{
+	if (GetCharacterMovement()->IsWalking() && input_active && slide_timer<=0)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Custom);
+		currentMovement = SLIDE;
+		travelDirection = Camera->GetForwardVector();
+		slide_timer = max_slide_timer;
+		currentState = SLIDING;
+	}
+	else if(slide_timer > 0)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		currentState = DEFAULT;
+		Jump();
+	}
+}
 void AC_CharController_Cassie::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));
 	if (DASHING)
 	{
-		currentState = default;
+		currentState = DEFAULT;
 		input_active = true;
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}
@@ -152,7 +206,7 @@ void AC_CharController_Cassie::OnHit(UPrimitiveComponent* HitComp, AActor* Other
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));
 	if (DASHING)
 	{
-		currentState = default;
+		currentState = DEFAULT;
 		input_active = true;
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 	}
@@ -161,15 +215,17 @@ void AC_CharController_Cassie::ForceJump()
 {
 	Jump();
 }
-void AC_CharController_Cassie::ForceJump(FVector direction)
+void AC_CharController_Cassie::ForceJump(FVector direction, float distance, float speed)
 {
 	GetCharacterMovement()->SetMovementMode(MOVE_Custom);
-	currentMovement = DASH;
+	currentMovement = JUMPAD;
 	auto location = GetActorLocation();
 	startPoint = location;
 	input_active = false;
 	travelDirection = direction;
-	currentState = DASHING;
+	currentState = PAD;
+	jumpad_distance = distance;
+	jumpad_velocity = speed;
 }
 FVector AC_CharController_Cassie::GetRotation()
 {

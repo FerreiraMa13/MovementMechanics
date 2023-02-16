@@ -36,19 +36,33 @@ void ABouncePad::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		{
 			if (dash_launch)
 			{
+
 				if (launch_vector == FVector(0, 0, 0))
 				{
 					player->ForceJump();
 				}
 				else
 				{
+					FVector temp_multiplier = HandleInteractions();
 					FVector temp_rotation = player->GetRotation();
 					temp_rotation.Normalize();
 					launch_vector.X = temp_rotation.X;
 					launch_vector.Y = temp_rotation.Y;
-					player->ForceJump(launch_vector);
+					player->ForceJump(launch_vector * temp_multiplier, 200, 70);
 				}
 			}
 		}
+}
+FVector ABouncePad::HandleInteractions()
+{
+	switch (player->currentState)
+	{
+	case SLIDING:
+		return FVector(1, 1, 2);
+		break;
+	default:
+		return FVector(1, 1, 1);
+		break;
+	}
 }
 
