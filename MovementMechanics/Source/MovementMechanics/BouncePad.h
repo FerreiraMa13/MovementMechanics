@@ -19,13 +19,18 @@ public:
 	ABouncePad();
 	UPROPERTY(EditAnywhere, Category = "Launch");
 		FVector launch_vector = FVector(0, 0, 0);
+		UPROPERTY(EditAnywhere, Category = "Launch");
+		float dash_launch_distance = 2000;
+		UPROPERTY(EditAnywhere, Category = "Launch");
+		float dash_launch_velocity = 1000;
 	UPROPERTY(EditAnywhere, Category = "Launch");
 		bool dash_launch = true;
 	UPROPERTY(EditAnywhere, Category = "Components")
 		UBoxComponent* BoxComponent;
 	UPROPERTY(EditAnywhere, Category = "References")
 		AC_CharController_Cassie* player = nullptr;
-	FVector HandleInteractions();
+	void HandleInteractions();
+	float launch_multiplier = 1.0f;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

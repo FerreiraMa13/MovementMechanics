@@ -43,25 +43,24 @@ void ABouncePad::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 				}
 				else
 				{
-					FVector temp_multiplier = HandleInteractions();
 					FVector temp_rotation = player->GetRotation();
 					temp_rotation.Normalize();
 					launch_vector.X = temp_rotation.X;
 					launch_vector.Y = temp_rotation.Y;
-					player->ForceJump(launch_vector * temp_multiplier, 200, 70);
+					player->ForceJump(launch_vector, dash_launch_distance * launch_multiplier, dash_launch_velocity * launch_multiplier);
 				}
 			}
 		}
 }
-FVector ABouncePad::HandleInteractions()
+void ABouncePad::HandleInteractions()
 {
 	switch (player->currentState)
 	{
 	case SLIDING:
-		return FVector(1, 1, 2);
+		launch_multiplier = 2.0f;
 		break;
 	default:
-		return FVector(1, 1, 1);
+		launch_multiplier = 0.0f;
 		break;
 	}
 }

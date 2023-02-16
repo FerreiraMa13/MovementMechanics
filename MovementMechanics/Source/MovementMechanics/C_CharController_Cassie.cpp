@@ -93,7 +93,7 @@ void AC_CharController_Cassie::HandleJumpad(float delta)
 {
 	FVector current_location = GetActorLocation();
 	SetActorLocation(current_location + travelDirection * jumpad_velocity * delta);
-	if (abs(current_location.Distance(GetActorLocation(), startPoint)) > jumpad_distance|| abs(current_location.Distance(current_location, GetActorLocation()) < 5.0f))
+	if (abs(current_location.Distance(GetActorLocation(), startPoint)) > jumpad_distance|| abs(current_location.Distance(current_location, GetActorLocation()) < 10.0f))
 	{
 		currentState = DEFAULT;
 		input_active = true;
