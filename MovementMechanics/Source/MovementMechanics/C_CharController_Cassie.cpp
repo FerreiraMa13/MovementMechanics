@@ -24,6 +24,8 @@ AC_CharController_Cassie::AC_CharController_Cassie()
 
 	Capsule = FindComponentByClass<UCapsuleComponent>();
 	Capsule->OnComponentHit.AddDynamic(this, &AC_CharController_Cassie::OnHit);
+
+	char_move = GetCharacterMovement();
 }
 void AC_CharController_Cassie::BeginPlay()
 {
@@ -68,9 +70,11 @@ void AC_CharController_Cassie::HandleTimers(float delta)
 }
 void AC_CharController_Cassie::HandleDash(float delta)
 {
+	
+	/*SetActorLocation(current_location + travelDirection * dash_velocity * delta);*/
+	char_move->AddForce(travelDirection * dash_velocity * PASSIVE_MULTIPLIER * delta);
 	FVector current_location = GetActorLocation();
-	SetActorLocation(current_location + travelDirection * dash_velocity * delta);
-	if (abs(current_location.Distance(GetActorLocation(), startPoint)) > dash_distance || abs(current_location.Distance(current_location, GetActorLocation()) < 10.0f))
+	if (abs(current_location.Distance(GetActorLocation(), startPoint)) > dash_distance || abs(current_location.Distance(current_location, GetActorLocation()) < 5.0f))
 	{
 		currentState = DEFAULT;
 		input_active = true;
@@ -218,6 +222,7 @@ void AC_CharController_Cassie::ForceJump()
 void AC_CharController_Cassie::ForceJump(FVector direction, float distance, float speed)
 {
 	GetCharacterMovement()->SetMovementMode(MOVE_Custom);
+	
 	currentMovement = JUMPAD;
 	auto location = GetActorLocation();
 	startPoint = location;

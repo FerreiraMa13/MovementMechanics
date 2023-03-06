@@ -53,6 +53,8 @@ public:
 		TEnumAsByte<CustomMovement> currentMovement = NONE;
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		FVector startPoint;
+	UPROPERTY()
+		UCharacterMovementComponent* char_move;
 	FVector travelDirection;
 
 protected:
@@ -76,6 +78,8 @@ protected:
 		UCapsuleComponent* Capsule;
 	UPROPERTY(EditAnywhere, Category = "Components")
 		UStaticMeshComponent* CollidingPoint;
+	UPROPERTY(EditAnywhere, Category = "General")
+		float PASSIVE_MULTIPLIER = 1000;
 
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		float dash_distance = 100.0f;
