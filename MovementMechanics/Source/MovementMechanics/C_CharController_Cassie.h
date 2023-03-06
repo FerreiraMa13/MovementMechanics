@@ -55,6 +55,8 @@ public:
 		FVector startPoint;
 	UPROPERTY()
 		UCharacterMovementComponent* char_move;
+	UPROPERTY()
+		UPawnMovementComponent* pawn_move;
 	FVector travelDirection;
 
 protected:
@@ -67,10 +69,13 @@ protected:
 	void JumpCheck();
 	void ActivateDash();
 	void ActivateSlide();
+	void HandleDashForce(float delta);
 	void HandleDash(float delta);
 	void HandleSlide(float delta);
 	void HandleJumpad(float delta);
 	void HandleTimers(float delta);
+	void ResetState();
+	void DebugLog();
 
 	UPROPERTY(EditAnywhere, Category = "Components")
 		UCameraComponent* Camera;

@@ -44,13 +44,13 @@ void AC_CharController_Cassie::Tick(float DeltaTime)
 		case DEFAULT:
 			break;
 		case DASHING:
-			HandleDash(DeltaTime);
+			HandleDashForce(DeltaTime);
 			break;
 		case SLIDING:
-			HandleSlide(DeltaTime);
+			//HandleSlide(DeltaTime);
 			break;
 		case PAD:
-			HandleJumpad(DeltaTime);
+			//HandleJumpad(DeltaTime);
 			break;
 		default:
 			break;
@@ -70,10 +70,10 @@ void AC_CharController_Cassie::HandleTimers(float delta)
 }
 void AC_CharController_Cassie::HandleDash(float delta)
 {
-	
-	/*SetActorLocation(current_location + travelDirection * dash_velocity * delta);*/
-	char_move->AddForce(travelDirection * dash_velocity * PASSIVE_MULTIPLIER * delta);
 	FVector current_location = GetActorLocation();
+	SetActorLocation(current_location + travelDirection * dash_velocity * delta);
+	/*char_move->AddForce(travelDirection * dash_velocity * PASSIVE_MULTIPLIER * delta);*/
+	
 	if (abs(current_location.Distance(GetActorLocation(), startPoint)) > dash_distance || abs(current_location.Distance(current_location, GetActorLocation()) < 5.0f))
 	{
 		currentState = DEFAULT;
@@ -81,6 +81,23 @@ void AC_CharController_Cassie::HandleDash(float delta)
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 		Jump();
 	}
+}
+void AC_CharController_Cassie::HandleDashForce(float delta)
+{
+	if (char_move->IsMovingOnGround())
+	{
+		ResetState();
+	}
+	/*if(timer <= 0)
+	{
+		ResetState();
+	}*/
+}
+void AC_CharController_Cassie::ResetState()
+{
+	currentState = DEFAULT;
+	char_move->SetMovementMode(MOVE_Falling);
+	input_active = true;
 }
 void AC_CharController_Cassie::HandleSlide(float delta)
 {
@@ -168,14 +185,23 @@ void AC_CharController_Cassie::ActivateDash()
 {
 	if ( timer <= 0)
 	{
-		GetCharacterMovement()->SetMovementMode(MOVE_Custom);
+		/*GetCharacterMovement()->SetMovementMode(MOVE_Custom);
 		currentMovement = DASH;
 		auto location = GetActorLocation();
 		startPoint = location;
 		travelDirection = Camera->GetForwardVector();
 		input_active = false;
 		timer = max_timer;
+		currentState = DASHING;*/
+
+		currentMovement = DASH;
 		currentState = DASHING;
+		startPoint = GetActorLocation();
+		travelDirection = Camera->GetForwardVector();
+		input_active = false;
+		timer = max_timer;
+
+		char_move->AddForce(travelDirection * 5000 * 1000);
 	}
 }
 void AC_CharController_Cassie::ActivateSlide()
@@ -235,4 +261,8 @@ void AC_CharController_Cassie::ForceJump(FVector direction, float distance, floa
 FVector AC_CharController_Cassie::GetRotation()
 {
 	return Camera->GetForwardVector();
+}
+void AC_CharController_Cassie::DebugLog()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("DebugMessage"));
 }
