@@ -66,11 +66,11 @@ protected:
 	void LookVertical(float axis_value);
 	void MoveSideway(float axis_value);
 	void MoveForward(float axis_value);
-	void JumpCheck();
 	void ActivateDash();
 	void ActivateSlide();
 	void HandleDashForce(float delta);
 	void HandleDash(float delta);
+	void HandleSlideForce(float delta);
 	void HandleSlide(float delta);
 	void HandleJumpad(float delta);
 	void HandleTimers(float delta);
@@ -96,6 +96,8 @@ protected:
 		float max_timer = 2.0f;
 	UPROPERTY(EditAnywhere, Category = "Slide Details")
 		float max_slide_timer = 3.0f;
+	UPROPERTY(EditAnywhere, Category = "Slide Details")
+		float slide_speed = 3.0f;
 
 public:	
 	// Called every frame

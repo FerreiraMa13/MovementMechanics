@@ -47,7 +47,7 @@ void AC_CharController_Cassie::Tick(float DeltaTime)
 			HandleDashForce(DeltaTime);
 			break;
 		case SLIDING:
-			//HandleSlide(DeltaTime);
+			HandleSlideForce(DeltaTime);
 			break;
 		case PAD:
 			//HandleJumpad(DeltaTime);
@@ -88,21 +88,19 @@ void AC_CharController_Cassie::HandleDashForce(float delta)
 	{
 		ResetState();
 	}
-	/*if(timer <= 0)
-	{
-		ResetState();
-	}*/
 }
-void AC_CharController_Cassie::ResetState()
-{
-	currentState = DEFAULT;
-	char_move->SetMovementMode(MOVE_Falling);
-	input_active = true;
-}
+
 void AC_CharController_Cassie::HandleSlide(float delta)
 {
-	FVector current_location = GetActorLocation();
-	SetActorLocation(current_location + this->GetActorForwardVector() * dash_velocity * delta);
+	if (slide_timer <= 0)
+	{
+		currentState = DEFAULT;
+		input_active = true;
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
+}
+void AC_CharController_Cassie::HandleSlideForce(float delta)
+{
 	if (slide_timer <= 0)
 	{
 		currentState = DEFAULT;
@@ -181,6 +179,12 @@ void AC_CharController_Cassie::MoveForward(float axis_value)
 		}
 	}
 }
+void AC_CharController_Cassie::ResetState()
+{
+	currentState = DEFAULT;
+	char_move->SetMovementMode(MOVE_Falling);
+	input_active = true;
+}
 void AC_CharController_Cassie::ActivateDash()
 {
 	if ( timer <= 0)
@@ -200,19 +204,20 @@ void AC_CharController_Cassie::ActivateDash()
 		travelDirection = Camera->GetForwardVector();
 		input_active = false;
 		timer = max_timer;
-
-		char_move->AddForce(travelDirection * 5000 * 1000);
+		char_move->AddForce(travelDirection * dash_velocity * PASSIVE_MULTIPLIER);
+		/*char_move->AddForce(travelDirection * dash_velocity * PASSIVE_MULTIPLIER);*/
 	}
 }
 void AC_CharController_Cassie::ActivateSlide()
 {
-	if (GetCharacterMovement()->IsWalking() && input_active && slide_timer<=0)
+	if (input_active && slide_timer <= 0 && char_move->IsMovingOnGround())
 	{
-		GetCharacterMovement()->SetMovementMode(MOVE_Custom);
 		currentMovement = SLIDE;
-		travelDirection = Camera->GetForwardVector();
-		slide_timer = max_slide_timer;
 		currentState = SLIDING;
+		travelDirection = Camera->GetForwardVector();
+		travelDirection.Z = 0;
+		slide_timer = max_slide_timer;
+		char_move->AddForce(travelDirection * slide_speed * PASSIVE_MULTIPLIER);
 	}
 	else if(slide_timer > 0)
 	{
