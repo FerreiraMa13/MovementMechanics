@@ -89,7 +89,6 @@ void AC_CharController_Cassie::HandleDashForce(float delta)
 		ResetState();
 	}
 }
-
 void AC_CharController_Cassie::HandleSlide(float delta)
 {
 	if (slide_timer <= 0)
@@ -210,8 +209,10 @@ void AC_CharController_Cassie::ActivateDash()
 }
 void AC_CharController_Cassie::ActivateSlide()
 {
-	if (input_active && slide_timer <= 0 && char_move->IsMovingOnGround())
+	if (input_active &&  slide_timer <= 0 &&  char_move->IsMovingOnGround())
 	{
+		DebugLog();
+		char_move->SetMovementMode(MOVE_Flying);
 		currentMovement = SLIDE;
 		currentState = SLIDING;
 		travelDirection = Camera->GetForwardVector();
@@ -219,12 +220,12 @@ void AC_CharController_Cassie::ActivateSlide()
 		slide_timer = max_slide_timer;
 		char_move->AddForce(travelDirection * slide_speed * PASSIVE_MULTIPLIER);
 	}
-	else if(slide_timer > 0)
+	/*else if(input_active && slide_timer > 0)
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		currentState = DEFAULT;
 		Jump();
-	}
+	}*/
 }
 void AC_CharController_Cassie::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
