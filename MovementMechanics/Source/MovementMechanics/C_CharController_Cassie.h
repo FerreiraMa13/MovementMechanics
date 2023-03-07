@@ -49,10 +49,10 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		TEnumAsByte<PlayerAbilityStates> currentState = DEFAULT;
-	UPROPERTY(EditAnywhere, Category = "Movement States")
-		TEnumAsByte<CustomMovement> currentMovement = NONE;
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		FVector startPoint;
+	UPROPERTY(EditAnywhere, Category = "Movement States")
+		TEnumAsByte<CustomMovement> currentMovement = NONE;
 	UPROPERTY()
 		UCharacterMovementComponent* char_move;
 	UPROPERTY()
@@ -68,6 +68,7 @@ protected:
 	void MoveForward(float axis_value);
 	void ActivateDash();
 	void ActivateSlide();
+	void ActivateJump();
 	void HandleDashForce(float delta);
 	void HandleDash(float delta);
 	void HandleSlideForce(float delta);
@@ -85,13 +86,18 @@ protected:
 		UStaticMeshComponent* CollidingPoint;
 	UPROPERTY(EditAnywhere, Category = "General")
 		float PASSIVE_MULTIPLIER = 1000;
+	UPROPERTY(EditAnywhere, Category = "General")
+		float stored_momentum = 0;
+	UPROPERTY(EditAnywhere, Category = "General")
+		float momentum_decay_rate = 5;
 
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		float dash_distance = 100.0f;
+	/*UPROPERTY(EditAnywhere, Category = "Dash Details")
+		float proximity_treshold = 5.0f;*/
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		float dash_velocity = 50.0f;
-	UPROPERTY(EditAnywhere, Category = "Dash Details")
-		float proximity_treshold = 5.0f;
+	
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		float max_timer = 2.0f;
 	UPROPERTY(EditAnywhere, Category = "Slide Details")

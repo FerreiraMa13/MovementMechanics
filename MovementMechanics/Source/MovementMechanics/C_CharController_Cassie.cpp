@@ -70,32 +70,33 @@ void AC_CharController_Cassie::HandleTimers(float delta)
 }
 void AC_CharController_Cassie::HandleDash(float delta)
 {
-	FVector current_location = GetActorLocation();
-	SetActorLocation(current_location + travelDirection * dash_velocity * delta);
-	/*char_move->AddForce(travelDirection * dash_velocity * PASSIVE_MULTIPLIER * delta);*/
-	
-	if (abs(current_location.Distance(GetActorLocation(), startPoint)) > dash_distance || abs(current_location.Distance(current_location, GetActorLocation()) < 5.0f))
-	{
-		currentState = DEFAULT;
-		input_active = true;
-		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-		Jump();
-	}
+	//FVector current_location = GetActorLocation();
+	//SetActorLocation(current_location + travelDirection * dash_velocity * delta);
+	///*char_move->AddForce(travelDirection * dash_velocity * PASSIVE_MULTIPLIER * delta);*/
+	//
+	//if (abs(current_location.Distance(GetActorLocation(), startPoint)) > dash_distance || abs(current_location.Distance(current_location, GetActorLocation()) < 5.0f))
+	//{
+	//	currentState = DEFAULT;
+	//	input_active = true;
+	//	GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+	//	Jump();
+	//}
 }
+void AC_CharController_Cassie::HandleSlide(float delta)
+{
+	//if (slide_timer <= 0)
+	//{
+	//	currentState = DEFAULT;
+	//	input_active = true;
+	//	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	//}
+}
+
 void AC_CharController_Cassie::HandleDashForce(float delta)
 {
 	if (char_move->IsMovingOnGround())
 	{
 		ResetState();
-	}
-}
-void AC_CharController_Cassie::HandleSlide(float delta)
-{
-	if (slide_timer <= 0)
-	{
-		currentState = DEFAULT;
-		input_active = true;
-		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	}
 }
 void AC_CharController_Cassie::HandleSlideForce(float delta)
@@ -109,7 +110,7 @@ void AC_CharController_Cassie::HandleSlideForce(float delta)
 }
 void AC_CharController_Cassie::HandleJumpad(float delta)
 {
-	FVector current_location = GetActorLocation();
+	/*FVector current_location = GetActorLocation();
 	SetActorLocation(current_location + travelDirection * jumpad_velocity * delta);
 	if (abs(current_location.Distance(GetActorLocation(), startPoint)) > jumpad_distance|| abs(current_location.Distance(current_location, GetActorLocation()) < 10.0f))
 	{
@@ -117,8 +118,15 @@ void AC_CharController_Cassie::HandleJumpad(float delta)
 		input_active = true;
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 		Jump();
+	}*/
+	if (char_move->IsMovingOnGround())
+	{
+		ResetState();
+		Jump();
 	}
 }
+
+
 void AC_CharController_Cassie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -127,7 +135,7 @@ void AC_CharController_Cassie::SetupPlayerInputComponent(UInputComponent* Player
 	PlayerInputComponent->BindAxis(TEXT("Look Vertical"), this, &AC_CharController_Cassie::LookVertical);
 	PlayerInputComponent->BindAxis(TEXT("Movement Forward"), this, &AC_CharController_Cassie::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("Movement Sideway"), this, &AC_CharController_Cassie::MoveSideway);
-	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AC_CharController_Cassie::ActivateJump);
 	PlayerInputComponent->BindAction(TEXT("Ability1"), IE_Pressed, this, &AC_CharController_Cassie::ActivateDash);
 	PlayerInputComponent->BindAction(TEXT("Slide"), IE_Pressed, this, &AC_CharController_Cassie::ActivateSlide);
 }
@@ -178,9 +186,12 @@ void AC_CharController_Cassie::MoveForward(float axis_value)
 		}
 	}
 }
+
+
 void AC_CharController_Cassie::ResetState()
 {
 	currentState = DEFAULT;
+	currentMovement = NONE;
 	char_move->SetMovementMode(MOVE_Falling);
 	input_active = true;
 }
@@ -220,13 +231,29 @@ void AC_CharController_Cassie::ActivateSlide()
 		slide_timer = max_slide_timer;
 		char_move->AddForce(travelDirection * slide_speed * PASSIVE_MULTIPLIER);
 	}
-	/*else if(input_active && slide_timer > 0)
+	else if(input_active && slide_timer > 0)
 	{
-		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-		currentState = DEFAULT;
+		ResetState();
 		Jump();
-	}*/
+	}
 }
+void AC_CharController_Cassie::ActivateJump()
+{
+	switch (currentState)
+	{
+	case(DASHING):
+		break;
+	case(SLIDING):
+		ResetState();
+		Jump();
+		break;
+	case (DEFAULT):
+		Jump();
+		break;
+	}
+}
+
+
 void AC_CharController_Cassie::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));
@@ -253,7 +280,7 @@ void AC_CharController_Cassie::ForceJump()
 }
 void AC_CharController_Cassie::ForceJump(FVector direction, float distance, float speed)
 {
-	GetCharacterMovement()->SetMovementMode(MOVE_Custom);
+	/*GetCharacterMovement()->SetMovementMode(MOVE_Custom);
 	
 	currentMovement = JUMPAD;
 	auto location = GetActorLocation();
@@ -262,7 +289,17 @@ void AC_CharController_Cassie::ForceJump(FVector direction, float distance, floa
 	travelDirection = direction;
 	currentState = PAD;
 	jumpad_distance = distance;
+	jumpad_velocity = speed;*/
+
+	/*currentMovement = JUMPAD;
+	currentState = PAD;*/
+	auto location = GetActorLocation();
+	startPoint = location;
+	/*input_active = false;*/
+	travelDirection = direction;
+	jumpad_distance = distance;
 	jumpad_velocity = speed;
+	char_move->AddForce(travelDirection *  jumpad_velocity * PASSIVE_MULTIPLIER);
 }
 FVector AC_CharController_Cassie::GetRotation()
 {
