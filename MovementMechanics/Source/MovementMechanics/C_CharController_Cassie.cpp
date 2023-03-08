@@ -50,7 +50,7 @@ void AC_CharController_Cassie::Tick(float DeltaTime)
 			HandleSlideForce(DeltaTime);
 			break;
 		case PAD:
-			//HandleJumpad(DeltaTime);
+			HandleJumpad(DeltaTime);
 			break;
 		default:
 			break;
@@ -59,9 +59,9 @@ void AC_CharController_Cassie::Tick(float DeltaTime)
 }
 void AC_CharController_Cassie::HandleTimers(float delta)
 {
-	if (timer > 0)
+	if (dash_timer > 0)
 	{
-		timer -= delta;
+		dash_timer -= delta;
 	}
 	if (slide_timer > 0)
 	{
@@ -94,7 +94,7 @@ void AC_CharController_Cassie::HandleSlide(float delta)
 
 void AC_CharController_Cassie::HandleDashForce(float delta)
 {
-	if (char_move->IsMovingOnGround())
+	if (/*char_move->IsMovingOnGround()*/dash_timer <= 0 || char_move->IsMovingOnGround())
 	{
 		ResetState();
 	}
@@ -122,7 +122,7 @@ void AC_CharController_Cassie::HandleJumpad(float delta)
 	if (char_move->IsMovingOnGround())
 	{
 		ResetState();
-		Jump();
+		/*Jump();*/
 	}
 }
 
@@ -197,7 +197,7 @@ void AC_CharController_Cassie::ResetState()
 }
 void AC_CharController_Cassie::ActivateDash()
 {
-	if ( timer <= 0)
+	if ( dash_timer <= 0)
 	{
 		/*GetCharacterMovement()->SetMovementMode(MOVE_Custom);
 		currentMovement = DASH;
@@ -213,8 +213,9 @@ void AC_CharController_Cassie::ActivateDash()
 		startPoint = GetActorLocation();
 		travelDirection = Camera->GetForwardVector();
 		input_active = false;
-		timer = max_timer;
+		dash_timer = max_dash_timer;
 		char_move->AddForce(travelDirection * dash_velocity * PASSIVE_MULTIPLIER);
+		
 		/*char_move->AddForce(travelDirection * dash_velocity * PASSIVE_MULTIPLIER);*/
 	}
 }
@@ -244,7 +245,9 @@ void AC_CharController_Cassie::ActivateJump()
 	case(DASHING):
 		break;
 	case(SLIDING):
+		
 		ResetState();
+		char_move->AddForce(FVector(0, 0, 1) * dash_velocity * 1 / 2 * PASSIVE_MULTIPLIER);
 		Jump();
 		break;
 	case (DEFAULT):
@@ -278,7 +281,7 @@ void AC_CharController_Cassie::ForceJump()
 {
 	Jump();
 }
-void AC_CharController_Cassie::ForceJump(FVector direction, float distance, float speed)
+void AC_CharController_Cassie::ForceJump(FVector direction, float speed)
 {
 	/*GetCharacterMovement()->SetMovementMode(MOVE_Custom);
 	
@@ -290,14 +293,15 @@ void AC_CharController_Cassie::ForceJump(FVector direction, float distance, floa
 	currentState = PAD;
 	jumpad_distance = distance;
 	jumpad_velocity = speed;*/
-
 	/*currentMovement = JUMPAD;
 	currentState = PAD;*/
+	ResetState();
 	auto location = GetActorLocation();
 	startPoint = location;
-	/*input_active = false;*/
+	currentMovement = JUMPAD;
+	currentState = PAD;
+	dash_timer = max_dash_timer;
 	travelDirection = direction;
-	jumpad_distance = distance;
 	jumpad_velocity = speed;
 	char_move->AddForce(travelDirection *  jumpad_velocity * PASSIVE_MULTIPLIER);
 }

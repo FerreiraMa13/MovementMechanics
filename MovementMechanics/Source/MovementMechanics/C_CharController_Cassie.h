@@ -42,7 +42,7 @@ public:
 	float rotation_multiplier_x = 2.0f;
 	float rotation_multiplier_y = 1.5f;
 	bool input_active = true;
-	float timer = 0.0f;
+	float dash_timer = 0.0f;
 	float slide_timer = 0.0f;
 	float jumpad_velocity = 60.0f;
 	float jumpad_distance = 120.0f;
@@ -85,7 +85,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Components")
 		UStaticMeshComponent* CollidingPoint;
 	UPROPERTY(EditAnywhere, Category = "General")
-		float PASSIVE_MULTIPLIER = 1000;
+		float PASSIVE_MULTIPLIER = 10000;
 	UPROPERTY(EditAnywhere, Category = "General")
 		float stored_momentum = 0;
 	UPROPERTY(EditAnywhere, Category = "General")
@@ -99,7 +99,7 @@ protected:
 		float dash_velocity = 50.0f;
 	
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
-		float max_timer = 2.0f;
+		float max_dash_timer = 2.0f;
 	UPROPERTY(EditAnywhere, Category = "Slide Details")
 		float max_slide_timer = 3.0f;
 	UPROPERTY(EditAnywhere, Category = "Slide Details")
@@ -112,7 +112,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void ForceJump();
-	void ForceJump(FVector direction, float distance, float speed);
+	void ForceJump(FVector direction, float speed);
 	FVector GetRotation();
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
