@@ -34,8 +34,7 @@ void ABouncePad::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Bounce!"));
 		if (player != nullptr)
 		{
-			if (dash_launch)
-			{
+			
 
 				if (launch_vector == FVector(0, 0, 0))
 				{
@@ -43,13 +42,16 @@ void ABouncePad::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 				}
 				else
 				{
+					if (dash_launch)
+					{
+					HandleInteractions();
+					}
 					FVector temp_rotation = player->GetRotation();
 					temp_rotation.Normalize();
-					launch_vector.X = temp_rotation.X;
-					launch_vector.Y = temp_rotation.Y;
-					player->ForceJump(launch_vector, dash_launch_distance * launch_multiplier, dash_launch_velocity * launch_multiplier);
+					
+					player->ForceJump(launch_vector * launch_multiplier, dash_launch_velocity );
 				}
-			}
+			
 		}
 }
 void ABouncePad::HandleInteractions()
@@ -57,10 +59,10 @@ void ABouncePad::HandleInteractions()
 	switch (player->currentState)
 	{
 	case SLIDING:
-		launch_multiplier = 2.0f;
+		launch_multiplier = 1.2f;
 		break;
 	default:
-		launch_multiplier = 0.0f;
+		launch_multiplier = 1.0f;
 		break;
 	}
 }

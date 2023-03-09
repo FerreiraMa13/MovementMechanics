@@ -42,17 +42,17 @@ public:
 	float rotation_multiplier_x = 2.0f;
 	float rotation_multiplier_y = 1.5f;
 	bool input_active = true;
-	float timer = 0.0f;
+	float dash_timer = 0.0f;
 	float slide_timer = 0.0f;
 	float jumpad_velocity = 60.0f;
 	float jumpad_distance = 120.0f;
 	
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		TEnumAsByte<PlayerAbilityStates> currentState = DEFAULT;
-	UPROPERTY(EditAnywhere, Category = "Movement States")
-		TEnumAsByte<CustomMovement> currentMovement = NONE;
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		FVector startPoint;
+	UPROPERTY(EditAnywhere, Category = "Movement States")
+		TEnumAsByte<CustomMovement> currentMovement = NONE;
 	UPROPERTY()
 		UCharacterMovementComponent* char_move;
 	UPROPERTY()
@@ -68,6 +68,7 @@ protected:
 	void MoveForward(float axis_value);
 	void ActivateDash();
 	void ActivateSlide();
+	void ActivateJump();
 	void HandleDashForce(float delta);
 	void HandleDash(float delta);
 	void HandleSlideForce(float delta);
@@ -84,16 +85,21 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Components")
 		UStaticMeshComponent* CollidingPoint;
 	UPROPERTY(EditAnywhere, Category = "General")
-		float PASSIVE_MULTIPLIER = 1000;
+		float PASSIVE_MULTIPLIER = 10000;
+	UPROPERTY(EditAnywhere, Category = "General")
+		float stored_momentum = 0;
+	UPROPERTY(EditAnywhere, Category = "General")
+		float momentum_decay_rate = 5;
 
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		float dash_distance = 100.0f;
+	/*UPROPERTY(EditAnywhere, Category = "Dash Details")
+		float proximity_treshold = 5.0f;*/
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		float dash_velocity = 50.0f;
+	
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
-		float proximity_treshold = 5.0f;
-	UPROPERTY(EditAnywhere, Category = "Dash Details")
-		float max_timer = 2.0f;
+		float max_dash_timer = 2.0f;
 	UPROPERTY(EditAnywhere, Category = "Slide Details")
 		float max_slide_timer = 3.0f;
 	UPROPERTY(EditAnywhere, Category = "Slide Details")
@@ -106,7 +112,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void ForceJump();
-	void ForceJump(FVector direction, float distance, float speed);
+	void ForceJump(FVector direction, float speed);
 	FVector GetRotation();
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

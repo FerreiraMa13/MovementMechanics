@@ -22,7 +22,7 @@ public:
 		UPROPERTY(EditAnywhere, Category = "Launch");
 		float dash_launch_distance = 2000;
 		UPROPERTY(EditAnywhere, Category = "Launch");
-		float dash_launch_velocity = 1000;
+		float dash_launch_velocity = 100;
 	UPROPERTY(EditAnywhere, Category = "Launch");
 		bool dash_launch = true;
 	UPROPERTY(EditAnywhere, Category = "Components")
