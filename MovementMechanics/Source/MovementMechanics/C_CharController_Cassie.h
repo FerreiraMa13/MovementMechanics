@@ -47,12 +47,19 @@ public:
 	float jumpad_velocity = 60.0f;
 	float jumpad_distance = 120.0f;
 	
+	
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		TEnumAsByte<PlayerAbilityStates> currentState = DEFAULT;
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		FVector startPoint;
 	UPROPERTY(EditAnywhere, Category = "Movement States")
 		TEnumAsByte<CustomMovement> currentMovement = NONE;
+	UPROPERTY(EditAnywhere, Category = "Gravity Details")
+		float grav_current = 1.2f;
+	UPROPERTY(EditAnywhere, Category = "Gravity Details")
+		float grav_start = 1.2f;
+	UPROPERTY(EditAnywhere, Category = "Gravity Details")
+		float grav_max = 2.2f;
 	UPROPERTY()
 		UCharacterMovementComponent* char_move;
 	UPROPERTY()
@@ -70,12 +77,11 @@ protected:
 	void ActivateSlide();
 	void ActivateJump();
 	void HandleDashForce(float delta);
-	void HandleDash(float delta);
 	void HandleSlideForce(float delta);
-	void HandleSlide(float delta);
 	void HandleJumpad(float delta);
 	void HandleTimers(float delta);
 	void ResetState();
+	void ForceGrav();
 	void DebugLog();
 
 	UPROPERTY(EditAnywhere, Category = "Components")

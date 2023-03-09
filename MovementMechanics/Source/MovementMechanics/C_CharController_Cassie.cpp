@@ -26,6 +26,7 @@ AC_CharController_Cassie::AC_CharController_Cassie()
 	Capsule->OnComponentHit.AddDynamic(this, &AC_CharController_Cassie::OnHit);
 
 	char_move = GetCharacterMovement();
+	char_move->GravityScale = grav_current;
 }
 void AC_CharController_Cassie::BeginPlay()
 {
@@ -67,36 +68,18 @@ void AC_CharController_Cassie::HandleTimers(float delta)
 	{
 		slide_timer -= delta;
 	}
+	if (grav_current != grav_start && char_move->IsMovingOnGround())
+	{
+		grav_current = grav_start;
+		char_move->GravityScale = grav_current;
+	}
 }
-void AC_CharController_Cassie::HandleDash(float delta)
-{
-	//FVector current_location = GetActorLocation();
-	//SetActorLocation(current_location + travelDirection * dash_velocity * delta);
-	///*char_move->AddForce(travelDirection * dash_velocity * PASSIVE_MULTIPLIER * delta);*/
-	//
-	//if (abs(current_location.Distance(GetActorLocation(), startPoint)) > dash_distance || abs(current_location.Distance(current_location, GetActorLocation()) < 5.0f))
-	//{
-	//	currentState = DEFAULT;
-	//	input_active = true;
-	//	GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-	//	Jump();
-	//}
-}
-void AC_CharController_Cassie::HandleSlide(float delta)
-{
-	//if (slide_timer <= 0)
-	//{
-	//	currentState = DEFAULT;
-	//	input_active = true;
-	//	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	//}
-}
-
 void AC_CharController_Cassie::HandleDashForce(float delta)
 {
-	if (/*char_move->IsMovingOnGround()*/dash_timer <= 0 || char_move->IsMovingOnGround())
+	if (dash_timer <= 0 || char_move->IsMovingOnGround())
 	{
 		ResetState();
+		ForceGrav();
 	}
 }
 void AC_CharController_Cassie::HandleSlideForce(float delta)
@@ -110,23 +93,12 @@ void AC_CharController_Cassie::HandleSlideForce(float delta)
 }
 void AC_CharController_Cassie::HandleJumpad(float delta)
 {
-	/*FVector current_location = GetActorLocation();
-	SetActorLocation(current_location + travelDirection * jumpad_velocity * delta);
-	if (abs(current_location.Distance(GetActorLocation(), startPoint)) > jumpad_distance|| abs(current_location.Distance(current_location, GetActorLocation()) < 10.0f))
-	{
-		currentState = DEFAULT;
-		input_active = true;
-		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-		Jump();
-	}*/
 	if (char_move->IsMovingOnGround())
 	{
 		ResetState();
-		/*Jump();*/
+		ForceGrav();
 	}
 }
-
-
 void AC_CharController_Cassie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -195,6 +167,11 @@ void AC_CharController_Cassie::ResetState()
 	char_move->SetMovementMode(MOVE_Falling);
 	input_active = true;
 }
+void AC_CharController_Cassie::ForceGrav()
+{
+	grav_current = grav_max;
+	char_move->GravityScale = grav_current;
+}
 void AC_CharController_Cassie::ActivateDash()
 {
 	if ( dash_timer <= 0)
@@ -208,6 +185,7 @@ void AC_CharController_Cassie::ActivateDash()
 		timer = max_timer;
 		currentState = DASHING;*/
 
+		char_move->SetMovementMode(MOVE_Flying);
 		currentMovement = DASH;
 		currentState = DASHING;
 		startPoint = GetActorLocation();
@@ -247,7 +225,8 @@ void AC_CharController_Cassie::ActivateJump()
 	case(SLIDING):
 		
 		ResetState();
-		char_move->AddForce(FVector(0, 0, 1) * dash_velocity * 1 / 2 * PASSIVE_MULTIPLIER);
+		/*char_move->AddForce(FVector(0, 0, 10) * slide_speed * 1 / 2 * PASSIVE_MULTIPLIER);
+		char_move->AddForce(Camera->GetForwardVector()* FVector(5,5,0) * -1 * 1 / 2 * slide_speed * PASSIVE_MULTIPLIER);*/
 		Jump();
 		break;
 	case (DEFAULT):
