@@ -1,6 +1,4 @@
 
-
-
 #include "ZipwireSpline.h"
 
 // Sets default values
@@ -16,6 +14,10 @@ AZipwireSpline::AZipwireSpline()
 	}
 }
 void AZipwireSpline::OnConstruction(const FTransform& Transform)
+{
+	MeshConstruction();
+}
+void AZipwireSpline::MeshConstruction()
 {
 	if (Mesh)
 	{
@@ -49,11 +51,21 @@ void AZipwireSpline::BeginPlay()
 	Super::BeginPlay();
 	
 }
-
 // Called every frame
 void AZipwireSpline::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+FVector AZipwireSpline::GetPositionAtProgression(float progression)
+{
+	return WireSpline->GetLocationAtTime(progression, ESplineCoordinateSpace::World);
+}
+void AZipwireSpline::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (player != nullptr)
+	{
+
+	}
 }
 

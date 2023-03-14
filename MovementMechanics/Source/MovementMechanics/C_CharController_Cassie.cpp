@@ -99,6 +99,8 @@ void AC_CharController_Cassie::HandleJumpad(float delta)
 		ForceGrav();
 	}
 }
+
+
 void AC_CharController_Cassie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -239,22 +241,22 @@ void AC_CharController_Cassie::ActivateJump()
 void AC_CharController_Cassie::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));
-	if (DASHING)
+	/*if (DASHING)
 	{
 		currentState = DEFAULT;
 		input_active = true;
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-	}
+	}*/
 }
 void AC_CharController_Cassie::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));
-	if (DASHING)
+	/*if (DASHING)
 	{
 		currentState = DEFAULT;
 		input_active = true;
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-	}
+	}*/
 }
 void AC_CharController_Cassie::ForceJump()
 {
