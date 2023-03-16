@@ -24,6 +24,7 @@ AC_CharController_Cassie::AC_CharController_Cassie()
 
 	Capsule = FindComponentByClass<UCapsuleComponent>();
 	Capsule->OnComponentHit.AddDynamic(this, &AC_CharController_Cassie::OnHit);
+	Capsule->OnComponentBeginOverlap.AddDynamic(this, &AC_CharController_Cassie::OnBeginOverlap);
 
 	char_move = GetCharacterMovement();
 	char_move->GravityScale = grav_current;
@@ -241,22 +242,10 @@ void AC_CharController_Cassie::ActivateJump()
 void AC_CharController_Cassie::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));
-	/*if (DASHING)
-	{
-		currentState = DEFAULT;
-		input_active = true;
-		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-	}*/
 }
 void AC_CharController_Cassie::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));
-	/*if (DASHING)
-	{
-		currentState = DEFAULT;
-		input_active = true;
-		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-	}*/
 }
 void AC_CharController_Cassie::ForceJump()
 {
