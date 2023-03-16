@@ -5,17 +5,17 @@
 AMovementGameManager::AMovementGameManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	for (TActorIterator<AZipwireSpline> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-	{
-		Zipwires.Add(*ActorItr);
-	}
+	
 }
 
 void AMovementGameManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	/*for (TActorIterator<AZipwireSpline> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		Zipwires.Add(*ActorItr);
+	}*/
 }
 
 void AMovementGameManager::Tick(float DeltaTime)
