@@ -3,6 +3,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
+#include "Components/BoxComponent.h"
 #include "C_CharController_Cassie.h"
 #include "ZipwireSpline.generated.h"
 

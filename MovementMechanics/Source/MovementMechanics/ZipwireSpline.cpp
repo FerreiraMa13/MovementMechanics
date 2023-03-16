@@ -24,12 +24,14 @@ void AZipwireSpline::MeshConstruction()
 		for (int splinePoint = 0; splinePoint < (WireSpline->GetNumberOfSplinePoints() - 1); splinePoint++)
 		{
 			USplineMeshComponent* tempSplineMeshComp = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+			//UBoxComponent* tempBoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollider"));
 
 			tempSplineMeshComp->SetStaticMesh(Mesh);
 			tempSplineMeshComp->SetMobility(EComponentMobility::Movable);
 			tempSplineMeshComp->CreationMethod = EComponentCreationMethod::UserConstructionScript;
 			tempSplineMeshComp->RegisterComponentWithWorld(GetWorld());
 			tempSplineMeshComp->AttachToComponent(WireSpline, FAttachmentTransformRules::KeepRelativeTransform);
+			/*tempBoxComp->AttachToComponent(WireSpline, FAttachmentTransformRules::KeepRelativeTransform);*/
 
 			const FVector tempMeshStartingPoint = WireSpline->GetLocationAtSplinePoint(splinePoint, ESplineCoordinateSpace::Local);
 			const FVector tempMeshStartTangent = WireSpline->GetTangentAtSplinePoint(splinePoint, ESplineCoordinateSpace::Local);
@@ -37,11 +39,15 @@ void AZipwireSpline::MeshConstruction()
 			const FVector tempMeshEndTangent = WireSpline->GetTangentAtSplinePoint(splinePoint + 1, ESplineCoordinateSpace::Local);
 
 			tempSplineMeshComp->SetStartAndEnd(tempMeshStartingPoint, tempMeshStartTangent, tempMeshEndingPoint, tempMeshEndTangent, true);
+			/*tempBoxComp->SetBoxExtent(tempMeshEndingPoint - tempMeshStartingPoint);*/
+			/*tempBoxComp->SetCollisionProfileName("Trigger");*/
 			tempSplineMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			if (ForwardAxis)
 			{
 				tempSplineMeshComp->SetForwardAxis(ForwardAxis);
 			}
+
+			/*tempBoxComp->OnComponentBeginOverlap.AddDynamic(this, &AZipwireSpline::OnBeginOverlap);*/
 		}
 	}
 }
@@ -65,7 +71,10 @@ void AZipwireSpline::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 {
 	if (player != nullptr)
 	{
-
+		if (OtherActor->ActorHasTag("Player"))
+		{
+			player->DebugLog();
+		}
 	}
 }
 
