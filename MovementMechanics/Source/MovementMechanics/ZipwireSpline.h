@@ -4,7 +4,6 @@
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/BoxComponent.h"
-#include "C_CharController_Cassie.h"
 #include "ZipwireSpline.generated.h"
 
 
@@ -39,8 +38,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Spline Details")
 		USplineComponent* WireSpline;
-	UPROPERTY(EditAnywhere, Category = "References")
-		AC_CharController_Cassie* player = nullptr;
+	/*UPROPERTY(EditAnywhere, Category = "References")
+		AC_CharController_Cassie* player = nullptr;*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline Details")
 		UStaticMesh* Mesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline Details")

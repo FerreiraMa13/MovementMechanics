@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "MovementGameManager.h"
 #include "Dash.h"
 #include "C_CharController_Cassie.generated.h"
 
@@ -76,6 +77,7 @@ protected:
 	void ActivateDash();
 	void ActivateSlide();
 	void ActivateJump();
+	void ActivateEngage();
 	void HandleDashForce(float delta);
 	void HandleSlideForce(float delta);
 	void HandleJumpad(float delta);
@@ -87,6 +89,8 @@ protected:
 		UCameraComponent* Camera;
 	UPROPERTY(EditAnywhere, Category = "Components")
 		UCapsuleComponent* Capsule;
+	UPROPERTY(EditAnywhere, Category = "References")
+		AMovementGameManager* game_manager;
 	UPROPERTY(EditAnywhere, Category = "Components")
 		UStaticMeshComponent* CollidingPoint;
 	UPROPERTY(EditAnywhere, Category = "General")

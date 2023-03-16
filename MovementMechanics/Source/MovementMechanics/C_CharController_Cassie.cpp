@@ -112,6 +112,7 @@ void AC_CharController_Cassie::SetupPlayerInputComponent(UInputComponent* Player
 	PlayerInputComponent->BindAxis(TEXT("Movement Sideway"), this, &AC_CharController_Cassie::MoveSideway);
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AC_CharController_Cassie::ActivateJump);
 	PlayerInputComponent->BindAction(TEXT("Ability1"), IE_Pressed, this, &AC_CharController_Cassie::ActivateDash);
+	PlayerInputComponent->BindAction(TEXT("Ability2"), IE_Pressed, this, &AC_CharController_Cassie::ActivateEngage);
 	PlayerInputComponent->BindAction(TEXT("Slide"), IE_Pressed, this, &AC_CharController_Cassie::ActivateSlide);
 }
 void AC_CharController_Cassie::LookHorizontal(float axis_value)
@@ -235,6 +236,13 @@ void AC_CharController_Cassie::ActivateJump()
 	case (DEFAULT):
 		Jump();
 		break;
+	}
+}
+void AC_CharController_Cassie::ActivateEngage()
+{
+	if (game_manager != nullptr)
+	{
+		game_manager->PrintNumberZipwires();
 	}
 }
 

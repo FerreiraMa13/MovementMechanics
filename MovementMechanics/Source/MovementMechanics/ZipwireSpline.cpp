@@ -64,12 +64,12 @@ FVector AZipwireSpline::GetPositionAtProgression(float progression)
 }
 void AZipwireSpline::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (player != nullptr)
+	/*if (player != nullptr)
 	{
 		if (OtherActor->ActorHasTag("Player"))
 		{
 			player->DebugLog();
 		}
-	}
+	}*/
 }
 
