@@ -54,6 +54,8 @@ void AC_CharController_Cassie::Tick(float DeltaTime)
 		case PAD:
 			HandleJumpad(DeltaTime);
 			break;
+		case ZIPLINING:
+			break;
 		default:
 			break;
 		}
@@ -99,6 +101,10 @@ void AC_CharController_Cassie::HandleJumpad(float delta)
 		ResetState();
 		ForceGrav();
 	}
+}
+void AC_CharController_Cassie::HandleZipline(float delta)
+{
+
 }
 
 
@@ -151,14 +157,21 @@ void AC_CharController_Cassie::MoveForward(float axis_value)
 {
 	if (input_active)
 	{
-		if (axis_value)
+		if (currentState != ZIPLINING)
 		{
-			FVector movementVec = this->GetActorForwardVector() * axis_value * character_speed;
-			if (axis_value < 0)
+			if (axis_value)
 			{
-				movementVec *= back_multiplier;
+				FVector movementVec = this->GetActorForwardVector() * axis_value * character_speed;
+				if (axis_value < 0)
+				{
+					movementVec *= back_multiplier;
+				}
+				this->AddMovementInput(movementVec);
 			}
-			this->AddMovementInput(movementVec);
+		}
+		else
+		{
+			zipling_input.Y = axis_value;
 		}
 	}
 }
@@ -242,7 +255,12 @@ void AC_CharController_Cassie::ActivateEngage()
 {
 	if (game_manager != nullptr)
 	{
-		game_manager->PrintNumberZipwires();
+		char_move->SetMovementMode(MOVE_Custom);
+		FVector tempRepo = game_manager->GetZiplineHead();
+		tempRepo.Z += 120;
+		this->SetActorLocation(tempRepo);
+		FVector tempDirect = game_manager->GetZiplineDirection();
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(" x: %f"), tempDirect.Size()));
 	}
 }
 

@@ -1,5 +1,3 @@
-
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -23,4 +21,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	bool CheckConnection();
 	void PrintNumberZipwires();
+	FVector GetZiplineHead();
+	FVector GetZiplineDirection();
 };

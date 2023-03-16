@@ -18,6 +18,7 @@ enum PlayerAbilityStates
 	DASHING = 1,
 	SLIDING = 2,
 	PAD = 3,
+	ZIPLINING = 4
 };
 
 UENUM()
@@ -47,6 +48,7 @@ public:
 	float slide_timer = 0.0f;
 	float jumpad_velocity = 60.0f;
 	float jumpad_distance = 120.0f;
+	FVector2D zipling_input = FVector2D(0,0);
 	
 	
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
@@ -82,6 +84,7 @@ protected:
 	void HandleSlideForce(float delta);
 	void HandleJumpad(float delta);
 	void HandleTimers(float delta);
+	void HandleZipline(float delta);
 	void ResetState();
 	void ForceGrav();
 
