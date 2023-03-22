@@ -11,11 +11,6 @@ AMovementGameManager::AMovementGameManager()
 void AMovementGameManager::BeginPlay()
 {
 	Super::BeginPlay();
-
-	/*for (TActorIterator<AZipwireSpline> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-	{
-		Zipwires.Add(*ActorItr);
-	}*/
 }
 
 void AMovementGameManager::Tick(float DeltaTime)
@@ -24,9 +19,12 @@ void AMovementGameManager::Tick(float DeltaTime)
 
 }
 
-bool AMovementGameManager::CheckConnection()
+bool AMovementGameManager::CheckConnection(FVector position)
 {
-	return true;
+	FVector tempPos = Zipwires[0]->GetClosestPoint(position);
+	FVector tempDis = tempPos - position;
+	float tempMag = tempDis.Size();
+	return (tempMag <= disThreshold);
 }
 void AMovementGameManager::PrintNumberZipwires()
 {
@@ -44,6 +42,14 @@ FVector AMovementGameManager::GetZiplineHead()
 FVector AMovementGameManager::GetZiplineDirection()
 {
 	return Zipwires[0]->GetPositionAtProgression(1) - Zipwires[0]->GetPositionAtProgression(0);
+}
+FVector AMovementGameManager::GetZiplineTangent(float progression)
+{
+	return Zipwires[0]->GetTangentAtProgression(progression);
+}
+FVector AMovementGameManager::GetClosePoint(FVector position)
+{
+	return (Zipwires[0]->GetClosestPoint(position));
 }
 
 

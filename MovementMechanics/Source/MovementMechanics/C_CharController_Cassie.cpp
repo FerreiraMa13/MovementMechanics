@@ -39,27 +39,25 @@ void AC_CharController_Cassie::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	HandleTimers(DeltaTime);
-	//if (!input_active)
-	//{
-		switch (currentState)
-		{
-		case DEFAULT:
-			break;
-		case DASHING:
-			HandleDashForce(DeltaTime);
-			break;
-		case SLIDING:
-			HandleSlideForce(DeltaTime);
-			break;
-		case PAD:
-			HandleJumpad(DeltaTime);
-			break;
-		case ZIPLINING:
-			break;
-		default:
-			break;
-		}
-	//}
+	switch (currentState)
+	{
+	case DEFAULT:
+		break;
+	case DASHING:
+		HandleDashForce(DeltaTime);
+		break;
+	case SLIDING:
+		HandleSlideForce(DeltaTime);
+		break;
+	case PAD:
+		HandleJumpad(DeltaTime);
+		break;
+	case ZIPLINING:
+		HandleZipline(DeltaTime);
+		break;
+	default:
+		break;
+	}
 }
 void AC_CharController_Cassie::HandleTimers(float delta)
 {
@@ -104,7 +102,23 @@ void AC_CharController_Cassie::HandleJumpad(float delta)
 }
 void AC_CharController_Cassie::HandleZipline(float delta)
 {
-
+	if (attatched)
+	{
+		float tempMulti = 0;
+		if (zipling_input.Y > 0)
+		{
+			tempMulti = 1;
+		}
+		else if (zipling_input.Y < 0)
+		{
+			tempMulti = -1;
+		}
+		if (CalculateAngleBetween(zipling_direction, Camera->GetForwardVector()) > 1.8f)
+		{
+			tempMulti *= -1;
+		}
+		char_move->AddForce(zipling_direction.GetSafeNormal() * PASSIVE_MULTIPLIER * tempMulti);
+	}
 }
 
 
@@ -246,6 +260,10 @@ void AC_CharController_Cassie::ActivateJump()
 		char_move->AddForce(Camera->GetForwardVector()* FVector(5,5,0) * -1 * 1 / 2 * slide_speed * PASSIVE_MULTIPLIER);*/
 		Jump();
 		break;
+	case(ZIPLINING):
+		ResetState();
+		Jump();
+		break;
 	case (DEFAULT):
 		Jump();
 		break;
@@ -255,12 +273,30 @@ void AC_CharController_Cassie::ActivateEngage()
 {
 	if (game_manager != nullptr)
 	{
-		char_move->SetMovementMode(MOVE_Custom);
-		FVector tempRepo = game_manager->GetZiplineHead();
-		tempRepo.Z += 120;
-		this->SetActorLocation(tempRepo);
-		FVector tempDirect = game_manager->GetZiplineDirection();
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(" x: %f"), tempDirect.Size()));
+		if (!attatched)
+		{
+			FVector tempPos = this->GetActorLocation();
+			if (game_manager->CheckConnection(tempPos))
+			{
+				char_move->SetMovementMode(MOVE_Flying);
+				currentState = ZIPLINING;
+				/*input_active = false;*/
+				attatched = true;
+				FVector tempRepo = game_manager->GetClosePoint(tempPos);
+				tempRepo.Z += 120;
+				this->SetActorLocation(tempRepo);
+				FVector tempDirect = game_manager->GetZiplineDirection();
+				zipling_direction = tempDirect;
+				char_move->ClearAccumulatedForces();
+				float tempMag = char_move->Velocity.Size();
+				char_move->Velocity = tempDirect.GetSafeNormal() * tempMag;
+			}
+		}
+		else
+		{
+			ResetState();
+			attatched = false;
+		}
 	}
 }
 
@@ -304,6 +340,19 @@ void AC_CharController_Cassie::ForceJump(FVector direction, float speed)
 FVector AC_CharController_Cassie::GetRotation()
 {
 	return Camera->GetForwardVector();
+}
+
+float AC_CharController_Cassie::CalculateAngleBetween(FVector vectorA, FVector vectorB)
+{
+	vectorA = vectorA.GetSafeNormal();
+	vectorB = vectorB.GetSafeNormal();
+
+	float dot_product = FVector::DotProduct(vectorA, vectorB);
+	dot_product = acos(dot_product);
+
+	/*GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT(" x: %f"), dot_product));*/
+
+	return dot_product;
 }
 void AC_CharController_Cassie::DebugLog()
 {

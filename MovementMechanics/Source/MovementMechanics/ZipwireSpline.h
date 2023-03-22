@@ -34,6 +34,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	FVector GetPositionAtProgression(float progression);
+	FVector GetTangentAtProgression(float progression);
+	FVector GetClosestPoint(FVector position);
 	float GetTimeAtPosition(FVector position);
 
 	UPROPERTY(EditAnywhere, Category = "Spline Details")

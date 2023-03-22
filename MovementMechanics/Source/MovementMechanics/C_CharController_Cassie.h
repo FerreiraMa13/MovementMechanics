@@ -43,12 +43,16 @@ public:
 	float back_multiplier = 0.6f;
 	float rotation_multiplier_x = 2.0f;
 	float rotation_multiplier_y = 1.5f;
-	bool input_active = true;
 	float dash_timer = 0.0f;
 	float slide_timer = 0.0f;
 	float jumpad_velocity = 60.0f;
 	float jumpad_distance = 120.0f;
+
+	bool input_active = true;
+	bool attatched = false;
+
 	FVector2D zipling_input = FVector2D(0,0);
+	FVector zipling_direction = FVector(0, 0, 0);
 	
 	
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
@@ -128,6 +132,7 @@ public:
 	void ForceJump(FVector direction, float speed);
 	FVector GetRotation();
 	void DebugLog();
+	float CalculateAngleBetween(FVector vectorA, FVector vectorB);
 
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
