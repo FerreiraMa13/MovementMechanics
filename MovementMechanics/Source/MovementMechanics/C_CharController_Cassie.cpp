@@ -104,6 +104,7 @@ void AC_CharController_Cassie::HandleZipline(float delta)
 {
 	if (attatched)
 	{
+		
 		float tempMulti = 0;
 		if (zipling_input.Y > 0)
 		{
@@ -118,6 +119,10 @@ void AC_CharController_Cassie::HandleZipline(float delta)
 			tempMulti *= -1;
 		}
 		char_move->AddForce(zipling_direction.GetSafeNormal() * PASSIVE_MULTIPLIER * tempMulti);
+		if (game_manager->CheckEndConnections(this->GetActorLocation()))
+		{
+			ResetState();
+		}
 	}
 }
 
