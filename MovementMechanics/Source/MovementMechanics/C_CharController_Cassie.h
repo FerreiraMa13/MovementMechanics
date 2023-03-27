@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/BoxComponent.h"
 #include "MovementGameManager.h"
 #include "Dash.h"
 #include "C_CharController_Cassie.generated.h"
@@ -96,6 +97,8 @@ protected:
 		UCameraComponent* Camera;
 	UPROPERTY(EditAnywhere, Category = "Components")
 		UCapsuleComponent* Capsule;
+	UPROPERTY(EditAnywhere, Category = "Components")
+		UBoxComponent* SlideCollision;
 	UPROPERTY(EditAnywhere, Category = "References")
 		AMovementGameManager* game_manager;
 	UPROPERTY(EditAnywhere, Category = "Components")
