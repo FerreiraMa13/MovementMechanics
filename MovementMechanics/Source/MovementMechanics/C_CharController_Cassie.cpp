@@ -25,7 +25,7 @@ AC_CharController_Cassie::AC_CharController_Cassie()
 	Capsule = FindComponentByClass<UCapsuleComponent>();
 	Capsule->OnComponentHit.AddDynamic(this, &AC_CharController_Cassie::OnHit);
 	Capsule->OnComponentBeginOverlap.AddDynamic(this, &AC_CharController_Cassie::OnBeginOverlap);
-	/*Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);*/
+	
 
 	SlideCollision = FindComponentByClass<UBoxComponent>();
 	/*SlideCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);*/
@@ -209,6 +209,7 @@ void AC_CharController_Cassie::ResetState()
 	input_active = true;
 	Camera->SetRelativeLocation(FVector(0, 0, 40));
 	this->GetMesh()->SetVisibility(true);
+	/*Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);*/
 }
 void AC_CharController_Cassie::ForceGrav()
 {
@@ -254,6 +255,7 @@ void AC_CharController_Cassie::ActivateSlide()
 		char_move->AddForce(travelDirection * slide_speed * PASSIVE_MULTIPLIER);
 		Camera->SetRelativeLocation(FVector(0, 0, 0));
 		this->GetMesh()->SetVisibility(false);
+		/*Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);*/
 	}
 	else if(input_active && slide_timer > 0)
 	{
