@@ -45,7 +45,9 @@ public:
 	float rotation_multiplier_x = 2.0f;
 	float rotation_multiplier_y = 1.5f;
 	float dash_timer = 0.0f;
+	float dash_cooldown = 0.0f;
 	float slide_timer = 0.0f;
+	float slide_cooldown = 0.0f;
 	float jumpad_velocity = 60.0f;
 	float jumpad_distance = 120.0f;
 
@@ -97,8 +99,6 @@ protected:
 		UCameraComponent* Camera;
 	UPROPERTY(EditAnywhere, Category = "Components")
 		UCapsuleComponent* Capsule;
-	UPROPERTY(EditAnywhere, Category = "Components")
-		UBoxComponent* SlideCollision;
 	UPROPERTY(EditAnywhere, Category = "References")
 		AMovementGameManager* game_manager;
 	UPROPERTY(EditAnywhere, Category = "Components")
@@ -119,8 +119,12 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category = "Dash Details")
 		float max_dash_timer = 2.0f;
+	UPROPERTY(EditAnywhere, Category = "Dash Details")
+		float max_dash_cooldown = 2.0f;
 	UPROPERTY(EditAnywhere, Category = "Slide Details")
 		float max_slide_timer = 3.0f;
+	UPROPERTY(EditAnywhere, Category = "Slide Details")
+		float max_slide_cooldown = 3.0f;
 	UPROPERTY(EditAnywhere, Category = "Slide Details")
 		float slide_speed = 3.0f;
 

@@ -25,10 +25,6 @@ AC_CharController_Cassie::AC_CharController_Cassie()
 	Capsule = FindComponentByClass<UCapsuleComponent>();
 	Capsule->OnComponentHit.AddDynamic(this, &AC_CharController_Cassie::OnHit);
 	Capsule->OnComponentBeginOverlap.AddDynamic(this, &AC_CharController_Cassie::OnBeginOverlap);
-	
-
-	SlideCollision = FindComponentByClass<UBoxComponent>();
-	/*SlideCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);*/
 
 	char_move = GetCharacterMovement();
 	char_move->GravityScale = grav_current;
@@ -69,9 +65,17 @@ void AC_CharController_Cassie::HandleTimers(float delta)
 	{
 		dash_timer -= delta;
 	}
+	else if(dash_cooldown > 0)
+	{
+		dash_cooldown -= delta;
+	}
 	if (slide_timer > 0)
 	{
 		slide_timer -= delta;
+	}
+	else if (slide_cooldown > 0)
+	{
+		slide_cooldown -= delta;
 	}
 	if (grav_current != grav_start && char_move->IsMovingOnGround())
 	{
@@ -92,9 +96,6 @@ void AC_CharController_Cassie::HandleSlideForce(float delta)
 	if (slide_timer <= 0)
 	{
 		ResetState();
-		/*currentState = DEFAULT;
-		input_active = true;
-		GetCharacterMovement()->SetMovementMode(MOVE_Walking);*/
 	}
 }
 void AC_CharController_Cassie::HandleJumpad(float delta)
@@ -111,19 +112,26 @@ void AC_CharController_Cassie::HandleZipline(float delta)
 	{
 		
 		float tempMulti = 0;
-		if (zipling_input.Y > 0)
-		{
-			tempMulti = 1;
-		}
-		else if (zipling_input.Y < 0)
+		float cameraAngle = CalculateAngleBetween(zipling_direction, Camera->GetForwardVector());
+		if ( cameraAngle > 1.8f)
 		{
 			tempMulti = -1;
 		}
-		if (CalculateAngleBetween(zipling_direction, Camera->GetForwardVector()) > 1.8f)
+		else
 		{
-			tempMulti *= -1;
+			tempMulti = 1;
 		}
-		char_move->AddForce(zipling_direction.GetSafeNormal() * PASSIVE_MULTIPLIER * tempMulti);
+		float inputMulti = 0;
+		if (zipling_input.Y < 0)
+		{
+			inputMulti  = -1;
+		}
+		else if (zipling_input.Y > 0)
+		{
+			inputMulti = 1;
+		}
+		
+		char_move->AddForce(zipling_direction.GetSafeNormal() * PASSIVE_MULTIPLIER * tempMulti * inputMulti);
 		if (game_manager->CheckEndConnections(this->GetActorLocation()))
 		{
 			ResetState();
@@ -203,12 +211,21 @@ void AC_CharController_Cassie::MoveForward(float axis_value)
 
 void AC_CharController_Cassie::ResetState()
 {
+	if (currentState == DASHING)
+	{
+		dash_cooldown = max_dash_cooldown;
+	}
+	else if (currentState == SLIDING)
+	{
+		slide_cooldown = max_slide_cooldown;
+	}
 	currentState = DEFAULT;
 	currentMovement = NONE;
 	char_move->SetMovementMode(MOVE_Falling);
 	input_active = true;
 	Camera->SetRelativeLocation(FVector(0, 0, 40));
 	this->GetMesh()->SetVisibility(true);
+	/*Capsule->SetCapsuleHalfHeight(88.0f, true);*/
 	/*Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);*/
 }
 void AC_CharController_Cassie::ForceGrav()
@@ -218,17 +235,12 @@ void AC_CharController_Cassie::ForceGrav()
 }
 void AC_CharController_Cassie::ActivateDash()
 {
-	if ( dash_timer <= 0)
+	if (currentState == ZIPLINING)
 	{
-		/*GetCharacterMovement()->SetMovementMode(MOVE_Custom);
-		currentMovement = DASH;
-		auto location = GetActorLocation();
-		startPoint = location;
-		travelDirection = Camera->GetForwardVector();
-		input_active = false;
-		timer = max_timer;
-		currentState = DASHING;*/
-
+		return;
+	}
+	if ( dash_timer <= 0 && dash_cooldown <= 0)
+	{
 		char_move->SetMovementMode(MOVE_Flying);
 		currentMovement = DASH;
 		currentState = DASHING;
@@ -243,7 +255,14 @@ void AC_CharController_Cassie::ActivateDash()
 }
 void AC_CharController_Cassie::ActivateSlide()
 {
-	if (input_active &&  slide_timer <= 0 &&  char_move->IsMovingOnGround())
+	if (currentState == ZIPLINING)
+	{
+		ResetState();
+		return;
+	}
+	if (input_active &&  
+		slide_timer <= 0 && slide_cooldown <=0 &&
+		char_move->IsMovingOnGround())
 	{
 		DebugLog();
 		char_move->SetMovementMode(MOVE_Flying);
@@ -255,7 +274,6 @@ void AC_CharController_Cassie::ActivateSlide()
 		char_move->AddForce(travelDirection * slide_speed * PASSIVE_MULTIPLIER);
 		Camera->SetRelativeLocation(FVector(0, 0, 0));
 		this->GetMesh()->SetVisibility(false);
-		/*Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);*/
 	}
 	else if(input_active && slide_timer > 0)
 	{
@@ -305,7 +323,14 @@ void AC_CharController_Cassie::ActivateEngage()
 				zipling_direction = tempDirect;
 				char_move->ClearAccumulatedForces();
 				float tempMag = char_move->Velocity.Size();
-				char_move->Velocity = tempDirect.GetSafeNormal() * tempMag;
+				/*char_move->Velocity = tempDirect.GetSafeNormal() * tempMag;*/
+				tempDirect = tempDirect.GetSafeNormal() * tempMag;
+				float cameraAngle = CalculateAngleBetween(tempDirect, Camera->GetForwardVector());
+				if (cameraAngle > 1.8f)
+				{
+					tempDirect *= -1;
+				}
+				char_move->Velocity = tempDirect;
 			}
 		}
 		else
@@ -319,11 +344,11 @@ void AC_CharController_Cassie::ActivateEngage()
 
 void AC_CharController_Cassie::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));
+	/*GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));*/
 }
 void AC_CharController_Cassie::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));
+	/*GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Hit!"));*/
 }
 void AC_CharController_Cassie::ForceJump()
 {
