@@ -7,6 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "C_CharController_Cassie.h"
 #include "Kismet/GameplayStatics.h"
+#include "Math/Vector.h"
 #include "BouncePad.generated.h"
 
 UCLASS()

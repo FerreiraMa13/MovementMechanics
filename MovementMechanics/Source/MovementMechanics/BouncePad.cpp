@@ -34,8 +34,6 @@ void ABouncePad::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Bounce!"));
 		if (player != nullptr)
 		{
-			
-
 				if (launch_vector == FVector(0, 0, 0))
 				{
 					player->ForceJump();
@@ -49,7 +47,20 @@ void ABouncePad::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 					FVector temp_rotation = player->GetRotation();
 					temp_rotation.Normalize();
 					
-					player->ForceJump(launch_vector * launch_multiplier, dash_launch_velocity );
+					FVector tempUp = FVector(0, 0, 0);
+					if (launch_vector.X != 0)
+					{
+						tempUp += GetActorForwardVector() * launch_vector.X;
+					}
+					if (launch_vector.Y != 0)
+					{
+						tempUp += GetActorRightVector() * launch_vector.Y;
+					}
+					if (launch_vector.Z != 0)
+					{
+						tempUp += GetActorUpVector() * launch_vector.Z;
+					}
+					player->ForceJump(tempUp * launch_multiplier, dash_launch_velocity );
 				}
 			
 		}

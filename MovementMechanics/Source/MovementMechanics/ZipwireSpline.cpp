@@ -24,6 +24,7 @@ void AZipwireSpline::MeshConstruction()
 		for (int splinePoint = 0; splinePoint < (WireSpline->GetNumberOfSplinePoints() - 1); splinePoint++)
 		{
 			USplineMeshComponent* tempSplineMeshComp = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+			UBoxComponent* tempBoxComp = NewObject<UBoxComponent>(this, UBoxComponent::StaticClass());
 
 			tempSplineMeshComp->SetStaticMesh(Mesh);
 			tempSplineMeshComp->SetMobility(EComponentMobility::Movable);
@@ -37,7 +38,7 @@ void AZipwireSpline::MeshConstruction()
 			const FVector tempMeshEndTangent = WireSpline->GetTangentAtSplinePoint(splinePoint + 1, ESplineCoordinateSpace::Local);
 
 			tempSplineMeshComp->SetStartAndEnd(tempMeshStartingPoint, tempMeshStartTangent, tempMeshEndingPoint, tempMeshEndTangent, true);
-			tempSplineMeshComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			tempSplineMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			if (ForwardAxis)
 			{
 				tempSplineMeshComp->SetForwardAxis(ForwardAxis);
@@ -55,17 +56,27 @@ void AZipwireSpline::BeginPlay()
 void AZipwireSpline::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 FVector AZipwireSpline::GetPositionAtProgression(float progression)
 {
 	return WireSpline->GetLocationAtTime(progression, ESplineCoordinateSpace::World);
 }
+FVector AZipwireSpline::GetTangentAtProgression(float progression)
+{
+	return WireSpline->GetTangentAtTime(progression, ESplineCoordinateSpace::World);
+}
+FVector AZipwireSpline::GetClosestPoint(FVector position)
+{
+	return WireSpline->FindLocationClosestToWorldLocation(position, ESplineCoordinateSpace::World);
+}
 void AZipwireSpline::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (player != nullptr)
+	/*if (player != nullptr)
 	{
-
-	}
+		if (OtherActor->ActorHasTag("Player"))
+		{
+			player->DebugLog();
+		}
+	}*/
 }
 

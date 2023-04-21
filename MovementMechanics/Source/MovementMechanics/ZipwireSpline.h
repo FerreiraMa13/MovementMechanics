@@ -3,7 +3,8 @@
 #include "GameFramework/Actor.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
-#include "C_CharController_Cassie.h"
+#include "Components/BoxComponent.h"
+
 #include "ZipwireSpline.generated.h"
 
 
@@ -34,12 +35,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	FVector GetPositionAtProgression(float progression);
+	FVector GetTangentAtProgression(float progression);
+	FVector GetClosestPoint(FVector position);
 	float GetTimeAtPosition(FVector position);
 
 	UPROPERTY(EditAnywhere, Category = "Spline Details")
 		USplineComponent* WireSpline;
-	UPROPERTY(EditAnywhere, Category = "References")
-		AC_CharController_Cassie* player = nullptr;
+	/*UPROPERTY(EditAnywhere, Category = "References")
+		AC_CharController_Cassie* player = nullptr;*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline Details")
 		UStaticMesh* Mesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spline Details")
