@@ -45,7 +45,6 @@ int AMovementGameManager::GetClosestWire(FVector position)
 				closest_index = independent_index;
 				closest_distance = distance_vector.Size();
 			}
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT(" %i: %f"), independent_index, closest_distance));
 			independent_index++;
 		}
 	}
@@ -58,8 +57,6 @@ void AMovementGameManager::PrintNumberZipwires()
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(" x: %f"), wire->GetDistanceTo(this)));
 	}*/
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(" x: %f"), Zipwires.Num()));
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, this->GetDebugName(Zipwires[0]));
 }
 FVector AMovementGameManager::GetZiplineHead()
 {

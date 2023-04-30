@@ -168,7 +168,6 @@ void AC_CharController_Cassie::LookVertical(float axis_value)
 		if (temp_rot < 65 && temp_rot > -45)
 		{
 			Camera->AddLocalRotation(FRotator(axis_value * rotation_multiplier_y, 0, 0));
-			//this->AddControllerPitchInput(axis_value * rotation_multiplier);
 		}
 		
 	}
@@ -178,7 +177,7 @@ void AC_CharController_Cassie::MoveSideway(float axis_value)
 {
 	if (input_active)
 	{
-		if (axis_value)
+		if (axis_value && currentState != ZIPLINING)
 		{
 			FVector movementVec = this->GetActorRightVector() * axis_value * character_speed * strafe_multiplier;
 			this->AddMovementInput(movementVec);
@@ -264,7 +263,6 @@ void AC_CharController_Cassie::ActivateSlide()
 		slide_timer <= 0 && slide_cooldown <=0 &&
 		char_move->IsMovingOnGround())
 	{
-		DebugLog();
 		char_move->SetMovementMode(MOVE_Flying);
 		currentMovement = SLIDE;
 		currentState = SLIDING;
